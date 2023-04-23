@@ -1,0 +1,1505 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.5.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Isaac Haïk Dunn" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="&#39;&#39;&#39; This program solves for the temperature distribution and the electrostatics potential in a wire in which an electric current is passing. It computes the electric field as well as the thermal gradient, enabling the computation and plot of the electric and thermal fluxes." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.c7b8d9abd591ba2253ea42747e3ac3f5.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.95d53890c5839471cef2375b6c449b9f.css" />
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="Isaac Haïk Dunn" />
+  <meta property="og:url" content="https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/" />
+  <meta property="og:title" content="Thermoelectricity With FEniCSx | Isaac Haïk Dunn" />
+  <meta property="og:description" content="&#39;&#39;&#39; This program solves for the temperature distribution and the electrostatics potential in a wire in which an electric current is passing. It computes the electric field as well as the thermal gradient, enabling the computation and plot of the electric and thermal fluxes." /><meta property="og:image" content="https://mantledparamountic.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://mantledparamountic.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2023-04-23T22:23:40&#43;02:00"
+      />
+    
+    <meta property="article:modified_time" content="2023-04-23T22:23:40&#43;02:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/"
+  },
+  "headline": "Thermoelectricity With FEniCSx",
+  
+  "datePublished": "2023-04-23T22:23:40+02:00",
+  "dateModified": "2023-04-23T22:23:40+02:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Isaac Haïk Dunn"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Isaac Haïk Dunn",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mantledparamountic.github.io/media/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "\u0026#39;\u0026#39;\u0026#39; This program solves for the temperature distribution and the electrostatics potential in a wire in which an electric current is passing. It computes the electric field as well as the thermal gradient, enabling the computation and plot of the electric and thermal fluxes."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Thermoelectricity With FEniCSx | Isaac Haïk Dunn</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="56cf91902c3181009557458b9282110d" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.2ed908358299dd7ab553faae685c746c.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#general"><span>General</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#computer_code"><span>Computer code</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#fun"><span>Fun</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+
+        
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+        
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    
+    
+    
+
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Thermoelectricity With FEniCSx</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  <span >
+      Isaac Haïk Dunn</span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Apr 23, 2023
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">This program solves for the temperature distribution and the electrostatics potential in a wire in which an electric
+</span></span></span><span class="line"><span class="cl"><span class="s1">current is passing. It computes the electric field as well as the thermal gradient, 
+</span></span></span><span class="line"><span class="cl"><span class="s1">enabling the computation and plot of the electric and thermal fluxes. It contains the generalization with thermoelectricity,
+</span></span></span><span class="line"><span class="cl"><span class="s1">which is enough to compute the efficiency of a device operating in a closed circuit.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">Tested the code by setting a vanishing Seebeck coefficient and by selecting current i/o surface same as thermal problem.
+</span></span></span><span class="line"><span class="cl"><span class="s1">This means I can trust my code and move on. Saved the file with ending &#34;test_0_works.ipynb&#34;.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">In this program, the &#34;injected&#34; current is the current produced by the voltage due to the temperature difference alone.
+</span></span></span><span class="line"><span class="cl"><span class="s1">This corresponds to attaching a wire to the material (although in this case we should consider Peltier heat).
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">The implementation is as follows. First, the thermal problem (without current) is solved, which gives the voltage generated
+</span></span></span><span class="line"><span class="cl"><span class="s1">by the temperature gradient. Then the thermoelectricity problem is solved iteratively, where there is an electric current caused
+</span></span></span><span class="line"><span class="cl"><span class="s1">by the voltage of the previous iteration, until convergence in the solutions (temp and volt) is achieved. Dirichlet b.c. are used.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">The first iteration works as expected. Tested with S=30e-6 V/K, I = 0 A. The code produces the correct E field, temperature, voltage, grad T, grad V, Je and JQ values.
+</span></span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">gmsh</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">gmshio</span>
+</span></span></code></pre></div><p>The cell below should be ran once (not necessarily every time). It assumes a mesh file was created with Gmsh. It reads it and convert it to xdmf using meshio.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Read the mesh files produced above.</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.io</span> <span class="kn">import</span> <span class="n">XDMFFile</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&#34;mesh.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mesh</span> <span class="o">=</span> <span class="n">xdmf</span><span class="o">.</span><span class="n">read_mesh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;Grid&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ct</span> <span class="o">=</span> <span class="n">xdmf</span><span class="o">.</span><span class="n">read_meshtags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&#34;Grid&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">create_connectivity</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">XDMFFile</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="s2">&#34;mt.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ft</span> <span class="o">=</span> <span class="n">xdmf</span><span class="o">.</span><span class="n">read_meshtags</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&#34;Grid&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>Now read the mesh. This should always be executed. Note that here we deal with a 3D mesh. If it were a 2D one (or 1D), we would have to change prune_z to True. The &ldquo;triangle&rdquo; and &ldquo;tetra&rdquo; would be &ldquo;line&rdquo; and &ldquo;triangle&rdquo; for the 2D case.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Read the mesh file created by Gmsh.</span>
+</span></span><span class="line"><span class="cl"><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_markers</span><span class="p">,</span> <span class="n">facet_markers</span> <span class="o">=</span> <span class="n">gmshio</span><span class="o">.</span><span class="n">read_from_msh</span><span class="p">(</span><span class="s2">&#34;meshes/long_wire_with_contacts.msh&#34;</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">gdim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Convert the mesh file to XDMF using meshio.</span>
+</span></span><span class="line"><span class="cl"><span class="n">proc</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">rank</span> 
+</span></span><span class="line"><span class="cl"><span class="c1">#print(proc)</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">meshio</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">create_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">cell_type</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">get_cells_type</span><span class="p">(</span><span class="n">cell_type</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cell_data</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">get_cell_data</span><span class="p">(</span><span class="s2">&#34;gmsh:physical&#34;</span><span class="p">,</span> <span class="n">cell_type</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">prune_z</span> <span class="k">else</span> <span class="n">mesh</span><span class="o">.</span><span class="n">points</span>
+</span></span><span class="line"><span class="cl">    <span class="n">out_mesh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="p">{</span><span class="n">cell_type</span><span class="p">:</span> <span class="n">cells</span><span class="p">},</span> <span class="n">cell_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;name_to_read&#34;</span><span class="p">:[</span><span class="n">cell_data</span><span class="p">]})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">out_mesh</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">proc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Read in mesh</span>
+</span></span><span class="line"><span class="cl">    <span class="n">msh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&#34;meshes/long_wire_with_contacts.msh&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   
+</span></span><span class="line"><span class="cl">    <span class="c1"># Create and save one file for the mesh, and one file for the facets </span>
+</span></span><span class="line"><span class="cl">    <span class="n">triangle_mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">msh</span><span class="p">,</span> <span class="s2">&#34;triangle&#34;</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tetrahedron_mesh</span> <span class="o">=</span> <span class="n">create_mesh</span><span class="p">(</span><span class="n">msh</span><span class="p">,</span> <span class="s2">&#34;tetra&#34;</span><span class="p">,</span> <span class="n">prune_z</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&#34;mt.xdmf&#34;</span><span class="p">,</span> <span class="n">triangle_mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&#34;mesh.xdmf&#34;</span><span class="p">,</span> <span class="n">tetrahedron_mesh</span><span class="p">)</span>
+</span></span></code></pre></div><pre><code>Info    : Reading 'meshes/long_wire_with_contacts.msh'...
+Info    : 51 entities
+Info    : 238 nodes
+Info    : 696 elements
+Info    : Done reading 'meshes/long_wire_with_contacts.msh'
+</code></pre>
+<p>Define the finite element function space. In this case it is a mixed element space, as we solve for the temperature and the voltage in two different function spaces.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Constant</span><span class="p">,</span> <span class="n">dirichletbc</span><span class="p">,</span> <span class="n">Function</span><span class="p">,</span> <span class="n">FunctionSpace</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="n">form</span><span class="p">,</span> <span class="n">locate_dofs_geometrical</span><span class="p">,</span> <span class="n">locate_dofs_topological</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SpatialCoordinate</span><span class="p">,</span> <span class="n">TestFunction</span><span class="p">,</span> <span class="n">TrialFunction</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                 <span class="n">dx</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">inner</span><span class="p">,</span> <span class="n">as_tensor</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">MixedElement</span><span class="p">,</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">split</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Define ME function space</span>
+</span></span><span class="line"><span class="cl"><span class="n">el</span> <span class="o">=</span> <span class="n">FiniteElement</span><span class="p">(</span><span class="s2">&#34;CG&#34;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ufl_cell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">mel</span> <span class="o">=</span> <span class="n">MixedElement</span><span class="p">([</span><span class="n">el</span><span class="p">,</span> <span class="n">el</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">ME</span> <span class="o">=</span> <span class="n">FunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mel</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">TestFunction</span><span class="p">(</span><span class="n">ME</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">TempVolt</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">ME</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">temp</span><span class="p">,</span> <span class="n">volt</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">TempVolt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dTV</span> <span class="o">=</span> <span class="n">TrialFunction</span><span class="p">(</span><span class="n">ME</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e-9</span>
+</span></span><span class="line"><span class="cl"><span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">rho</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">kappa</span> <span class="o">=</span> <span class="mi">144</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Seebeck_coeff</span> <span class="o">=</span> <span class="mf">30e-6</span>
+</span></span></code></pre></div><p>With Gmsh we can see the ID (number) of physical surfaces where we wish to apply boundary conditions. We can also see them in the file.geo. Here we assign a variable to these surfaces. We also prepare the boundary conditions.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Reminder of the mesh:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#Physical Volume(&#34;the_wire&#34;, 13) = {1};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#Physical Surface(&#34;left_contact_2&#34;, 28) = {17};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#Physical Surface(&#34;right_end&#34;, 47) = {26};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#Physical Surface(&#34;right_contact_2&#34;, 48) = {23};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#Physical Surface(&#34;left_end&#34;, 49) = {25};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">inj_current_surface</span> <span class="o">=</span> <span class="mi">28</span>
+</span></span><span class="line"><span class="cl"><span class="n">vanish_voltage_surface</span> <span class="o">=</span> <span class="mi">48</span> <span class="c1"># This corresponds to the curve the current leaves the material.</span>
+</span></span><span class="line"><span class="cl"><span class="n">V_current_contact_out</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># Voltage value of the curve where the current leaves the material.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#V_current_contact_in = 1.6</span>
+</span></span><span class="line"><span class="cl"><span class="n">reading_voltage_surface_0</span> <span class="o">=</span> <span class="mi">28</span>
+</span></span><span class="line"><span class="cl"><span class="n">reading_voltage_surface_1</span> <span class="o">=</span> <span class="mi">48</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">hot_surface</span> <span class="o">=</span> <span class="mi">47</span>
+</span></span><span class="line"><span class="cl"><span class="n">cold_surface</span> <span class="o">=</span> <span class="mi">49</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">T_cold</span> <span class="o">=</span> <span class="mf">300.0</span>
+</span></span><span class="line"><span class="cl"><span class="n">T_hot</span> <span class="o">=</span> <span class="mf">320.0</span>
+</span></span></code></pre></div><p>We apply the Dirichlet boundary conditions here. Neumann&rsquo;s boundary conditions are dealt with in the weak form, a bit later.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Define the boundary conditions. For this, we need to find the facets where the b.c. will be applied.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># I use Dirichlet b.c. where I inject the current as well as where the current exists the material,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># except in the 1st iteration.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">petsc4py.PETSc</span> <span class="kn">import</span> <span class="n">ScalarType</span>
+</span></span><span class="line"><span class="cl"><span class="n">left_facets_current</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">right_facets_current</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">vanish_voltage_surface</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">left_dofs_current</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">right_facets_current</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#right_dofs_current = locate_dofs_topological(ME.sub(1), mesh.topology.dim-1, right_facets_current)</span>
+</span></span><span class="line"><span class="cl"><span class="n">bc_volt</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="n">V_current_contact_out</span><span class="p">),</span> <span class="n">left_dofs_current</span><span class="p">,</span> <span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#bc_volt_2 = dirichletbc(ScalarType(V_current_contact_in), right_dofs_current, ME.sub(1))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">left_facets_temperature</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">hot_surface</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">right_facets_temperature</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">cold_surface</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">left_dofs_temp</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">left_facets_temperature</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">right_dofs_temp</span> <span class="o">=</span> <span class="n">locate_dofs_topological</span><span class="p">(</span><span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">right_facets_temperature</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">bc_temp_left</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="n">T_cold</span><span class="p">),</span> <span class="n">left_dofs_temp</span><span class="p">,</span> <span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">bc_temp_right</span> <span class="o">=</span> <span class="n">dirichletbc</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">(</span><span class="n">T_hot</span><span class="p">),</span> <span class="n">right_dofs_temp</span><span class="p">,</span> <span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#cs = [bc_temp_left, bc_temp_right, bc_volt, bc_volt_2]</span>
+</span></span><span class="line"><span class="cl"><span class="n">bcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc_temp_left</span><span class="p">,</span> <span class="n">bc_temp_right</span><span class="p">]</span><span class="c1">#, bc_volt]</span>
+</span></span></code></pre></div><p>Before dealing with the weak form, we prepare the domain of integration. We also specify the magnitude of current that we apply through the 2 surfaces (current injection and outjection surfaces).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">assemble_scalar</span><span class="p">,</span> <span class="n">form</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">Measure</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">SpatialCoordinate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dx</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">(</span><span class="s2">&#34;dx&#34;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span><span class="n">subdomain_data</span><span class="o">=</span><span class="n">ct</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ds</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">(</span><span class="s2">&#34;ds&#34;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">subdomain_data</span><span class="o">=</span><span class="n">ft</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">the_current</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">#4.0 # Current, in amperes.</span>
+</span></span><span class="line"><span class="cl"><span class="n">J</span> <span class="o">=</span> <span class="n">the_current</span> <span class="o">/</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Current density:&#39;</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Surface area where current is injected&#39;</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Surface area where current leaves the wire&#39;</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">vanish_voltage_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl"><span class="n">L</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="o">*</span><span class="mf">0.9</span>
+</span></span><span class="line"><span class="cl"><span class="n">estimated_Joule_heat</span> <span class="o">=</span> <span class="n">the_current</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">L</span> <span class="o">/</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Estimated Joule heat generated through the whole volume: &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">estimated_Joule_heat</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; W.&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><pre><code>Current density: 0.0
+Surface area where current is injected 2.000000000000001e-08
+Surface area where current leaves the wire 1.9999999999999878e-08
+Estimated Joule heat generated through the whole volume:  0.0 W.
+</code></pre>
+<p>We initialize the temperature and voltage to reasonable values before we write down the weak form of the problem. We also specify some parameters to the solver.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ufl</span> <span class="kn">import</span> <span class="n">dot</span><span class="p">,</span> <span class="n">derivative</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">temp_init</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">T_cold</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">values</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">volt_init</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">V_current_contact_out</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">ScalarType</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">values</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Initialize values for the temperature and voltage.</span>
+</span></span><span class="line"><span class="cl"><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">temp_init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">volt_init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Weak form.</span>
+</span></span><span class="line"><span class="cl"><span class="n">J_vector</span> <span class="o">=</span> <span class="o">-</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">volt</span><span class="p">)</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">Seebeck_coeff</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Fourier_term</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="o">-</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span>
+</span></span><span class="line"><span class="cl"><span class="n">Joule_term</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">J_vector</span><span class="p">,</span> <span class="n">J_vector</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span> <span class="o">*</span> <span class="n">dx</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">F_T</span> <span class="o">=</span> <span class="n">Fourier_term</span> <span class="o">+</span> <span class="n">Joule_term</span>
+</span></span><span class="line"><span class="cl"><span class="n">F_V</span> <span class="o">=</span> <span class="o">-</span><span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">volt</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="o">-</span><span class="n">dot</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">Seebeck_coeff</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span><span class="o">*</span><span class="n">dx</span> <span class="c1">#+ v * J * ds(vanish_voltage_surface) </span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This should correspond to the current injected: &#39;</span><span class="p">,</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="n">J</span><span class="o">*</span><span class="n">ds</span><span class="p">(</span><span class="n">vanish_voltage_surface</span><span class="p">))))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">weak_form</span> <span class="o">=</span> <span class="n">F_T</span> <span class="o">+</span> <span class="n">F_V</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Jac</span> <span class="o">=</span> <span class="n">derivative</span><span class="p">(</span><span class="n">weak_form</span><span class="p">,</span><span class="n">TempVolt</span><span class="p">,</span><span class="n">dTV</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Solve the PDE.</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.fem.petsc</span> <span class="kn">import</span> <span class="n">NonlinearProblem</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.nls.petsc</span> <span class="kn">import</span> <span class="n">NewtonSolver</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">problem</span> <span class="o">=</span> <span class="n">NonlinearProblem</span><span class="p">(</span><span class="n">weak_form</span><span class="p">,</span> <span class="n">TempVolt</span><span class="p">,</span> <span class="n">bcs</span><span class="o">=</span><span class="n">bcs</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">Jac</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">solver</span> <span class="o">=</span> <span class="n">NewtonSolver</span><span class="p">(</span><span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">solver</span><span class="o">.</span><span class="n">convergence_criterion</span> <span class="o">=</span> <span class="s2">&#34;incremental&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">solver</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-14</span>
+</span></span><span class="line"><span class="cl"><span class="n">solver</span><span class="o">.</span><span class="n">report</span> <span class="o">=</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ksp</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">krylov_solver</span>
+</span></span><span class="line"><span class="cl"><span class="n">opts</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Options</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">option_prefix</span> <span class="o">=</span> <span class="n">ksp</span><span class="o">.</span><span class="n">getOptionsPrefix</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#opts[f&#34;{option_prefix}ksp_type&#34;] = &#34;cg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#opts[f&#34;{option_prefix}pc_type&#34;] = &#34;gamg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">opts</span><span class="p">[</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">option_prefix</span><span class="si">}</span><span class="s2">ksp_type&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;preonly&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">opts</span><span class="p">[</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">option_prefix</span><span class="si">}</span><span class="s2">pc_type&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;lu&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">opts</span><span class="p">[</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">option_prefix</span><span class="si">}</span><span class="s2">pc_factor_mat_solver_type&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;mumps&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">opts</span><span class="p">[</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">option_prefix</span><span class="si">}</span><span class="s2">ksp_max_it&#34;</span><span class="p">]</span><span class="o">=</span> <span class="mi">10000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ksp</span><span class="o">.</span><span class="n">setFromOptions</span><span class="p">()</span>
+</span></span></code></pre></div><pre><code>This should correspond to the current injected:  0.0
+</code></pre>
+<p>We solve the problem.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">log</span><span class="o">.</span><span class="n">set_log_level</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">n</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">TempVolt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">assert</span><span class="p">(</span><span class="n">converged</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Number of interations: </span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><pre><code>Number of interations: 2
+</code></pre>
+<p>lu_solver = ksp
+viewer = PETSc.Viewer().createASCII(&ldquo;lu_output.txt&rdquo;)
+lu_solver.view(viewer)
+solver_output = open(&ldquo;lu_output.txt&rdquo;, &ldquo;r&rdquo;)
+for line in solver_output.readlines():
+print(line)</p>
+<p>Now that we have the solution, we can compute some quantities of interest.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">avg_voltage_curve_integral_0</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="n">volt</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">reading_voltage_surface_0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span> <span class="o">/</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">reading_voltage_surface_0</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="n">avg_voltage_curve_integral_1</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="n">volt</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">reading_voltage_surface_1</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span> <span class="o">/</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">reading_voltage_surface_1</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="n">voltage_diff</span> <span class="o">=</span> <span class="n">avg_voltage_curve_integral_1</span> <span class="o">-</span> <span class="n">avg_voltage_curve_integral_0</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">voltage_diff</span><span class="p">,</span><span class="s1">&#39;voltage measured (V)&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;voltage left&#39;</span><span class="p">,</span> <span class="n">avg_voltage_curve_integral_0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;voltage right&#39;</span><span class="p">,</span> <span class="n">avg_voltage_curve_integral_1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">avg_temperature_curve_integral_1</span> <span class="o">=</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="n">temp</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span> <span class="o">/</span> <span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="p">(</span><span class="n">inj_current_surface</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">mesh</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">avg_temperature_curve_integral_1</span><span class="p">,</span><span class="s1">&#39;Temperature of current injection contact (K)&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Computed generated Joule heat through the whole volume: &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">assemble_scalar</span><span class="p">(</span><span class="n">form</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">J_vector</span><span class="p">,</span> <span class="n">J_vector</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">)))</span> <span class="o">+</span> <span class="s1">&#39; W.&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><pre><code>---------------------------------------------------------------------------
+
+NameError                                 Traceback (most recent call last)
+
+Cell In [5], line 1
+----&gt; 1 avg_voltage_curve_integral_0 = assemble_scalar(form(volt * ds(reading_voltage_surface_0, domain=mesh))) / assemble_scalar(form(1 * ds(reading_voltage_surface_0, domain=mesh)))
+      2 avg_voltage_curve_integral_1 = assemble_scalar(form(volt * ds(reading_voltage_surface_1, domain=mesh))) / assemble_scalar(form(1 * ds(reading_voltage_surface_1, domain=mesh)))
+      3 voltage_diff = avg_voltage_curve_integral_1 - avg_voltage_curve_integral_0
+
+
+NameError: name 'ds' is not defined
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pyvista</span>
+</span></span><span class="line"><span class="cl"><span class="n">pyvista</span><span class="o">.</span><span class="n">set_jupyter_backend</span><span class="p">(</span><span class="s2">&#34;pythreejs&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">plot</span>
+</span></span><span class="line"><span class="cl"><span class="n">V0</span><span class="p">,</span> <span class="n">dofs</span> <span class="o">=</span> <span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Prepare viewer for plotting the solution during the computation</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">V0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&#34;volt&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TempVolt</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">dofs</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&#34;volt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">u_grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u_plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div><pre><code>[0m[2m2023-04-22 21:11:08.189 ( 927.347s) [        29FC0000]    vtkExtractEdges.cxx:435   INFO| [0mExecuting edge extractor: points are renumbered[0m
+[0m[2m2023-04-22 21:11:08.190 ( 927.348s) [        29FC0000]    vtkExtractEdges.cxx:551   INFO| [0mCreated 624 edges[0m
+
+
+
+Renderer(camera=PerspectiveCamera(aspect=1.3333333333333333, children=(DirectionalLight(intensity=0.25, positi…
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">U0</span><span class="p">,</span> <span class="n">dofs_u</span> <span class="o">=</span> <span class="n">ME</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">U0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="n">u_topology</span><span class="p">,</span> <span class="n">u_cell_types</span><span class="p">,</span> <span class="n">u_geometry</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s2">&#34;temp&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TempVolt</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">dofs_u</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&#34;temp&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">u_grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">u_plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">u_plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div><pre><code>[0m[2m2023-04-22 21:11:08.601 ( 927.759s) [        29FC0000]    vtkExtractEdges.cxx:435   INFO| [0mExecuting edge extractor: points are renumbered[0m
+[0m[2m2023-04-22 21:11:08.602 ( 927.760s) [        29FC0000]    vtkExtractEdges.cxx:551   INFO| [0mCreated 624 edges[0m
+
+
+
+Renderer(camera=PerspectiveCamera(aspect=1.3333333333333333, children=(DirectionalLight(intensity=0.25, positi…
+</code></pre>
+<p>For derived vector quantities from the temperature and voltage, it&rsquo;s a little bit more involved. We must interpolate the expressions in some vector function space.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Need to interpolate E_field on some vector space. Because it wouldn&#39;t be continuous otherwise.</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.fem</span> <span class="kn">import</span> <span class="n">VectorFunctionSpace</span><span class="p">,</span> <span class="n">Expression</span>
+</span></span><span class="line"><span class="cl"><span class="n">W</span> <span class="o">=</span> <span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&#34;DG&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">E_field</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">E_field_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="o">-</span><span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="n">W</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">E_field</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">E_field_expr</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.plot</span> <span class="kn">import</span> <span class="n">create_vtk_mesh</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">grid</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">(</span><span class="o">*</span><span class="n">create_vtk_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_local_cells</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">size_local</span>
+</span></span><span class="line"><span class="cl"><span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s2">&#34;Marker&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ct</span><span class="o">.</span><span class="n">indices</span><span class="o">&lt;</span><span class="n">num_local_cells</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">grid</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&#34;Marker&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotter</span><span class="o">.</span><span class="n">view_xy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cell_tag_fig</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&#34;cell_tags.png&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><pre><code>[0m[2m2023-04-22 21:11:09.519 ( 928.677s) [        29FC0000]    vtkExtractEdges.cxx:435   INFO| [0mExecuting edge extractor: points are renumbered[0m
+[0m[2m2023-04-22 21:11:09.520 ( 928.678s) [        29FC0000]    vtkExtractEdges.cxx:551   INFO| [0mCreated 624 edges[0m
+
+
+
+Renderer(camera=PerspectiveCamera(aspect=1.3333333333333333, children=(DirectionalLight(intensity=0.25, positi…
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx.mesh</span> <span class="kn">import</span> <span class="n">compute_midpoints</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotter</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotter</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">18</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># We include ghosts cells as we access all degrees of freedom (including ghosts) on each process</span>
+</span></span><span class="line"><span class="cl"><span class="n">top_imap</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">index_map</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_cells</span> <span class="o">=</span> <span class="n">top_imap</span><span class="o">.</span><span class="n">size_local</span> <span class="o">+</span> <span class="n">top_imap</span><span class="o">.</span><span class="n">num_ghosts</span>
+</span></span><span class="line"><span class="cl"><span class="n">midpoints</span> <span class="o">=</span> <span class="n">compute_midpoints</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_cells</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#print(num_cells)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#print(num_dofs)</span>
+</span></span><span class="line"><span class="cl"><span class="n">num_dofs</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">size_local</span> <span class="o">+</span>  <span class="n">W</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map</span><span class="o">.</span><span class="n">num_ghosts</span>
+</span></span><span class="line"><span class="cl"><span class="k">assert</span><span class="p">(</span><span class="n">num_cells</span> <span class="o">==</span> <span class="n">num_dofs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_dofs</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">E_field</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">real</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_dofs</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">dofmap</span><span class="o">.</span><span class="n">index_map_bs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">cloud</span> <span class="o">=</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">PolyData</span><span class="p">(</span><span class="n">midpoints</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">cloud</span><span class="p">[</span><span class="s2">&#34;E_field&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="n">glyphs</span> <span class="o">=</span> <span class="n">cloud</span><span class="o">.</span><span class="n">glyph</span><span class="p">(</span><span class="s2">&#34;E_field&#34;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1e-0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">actor</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&#34;wireframe&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&#34;k&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">actor2</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">glyphs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="ow">not</span> <span class="n">pyvista</span><span class="o">.</span><span class="n">OFF_SCREEN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pyvista</span><span class="o">.</span><span class="n">start_xvfb</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">B_fig</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">screenshot</span><span class="p">(</span><span class="s2">&#34;E_field.png&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">dim</span><span class="p">]))</span>
+</span></span></code></pre></div><pre><code>[0m[2m2023-04-22 21:11:10.183 ( 929.341s) [        29FC0000]    vtkExtractEdges.cxx:435   INFO| [0mExecuting edge extractor: points are renumbered[0m
+[0m[2m2023-04-22 21:11:10.185 ( 929.343s) [        29FC0000]    vtkExtractEdges.cxx:551   INFO| [0mCreated 624 edges[0m
+
+
+
+Renderer(camera=PerspectiveCamera(aspect=1.3333333333333333, children=(DirectionalLight(intensity=0.25, positi…
+
+
+1.0880185641326534e-14
+-0.060000000000001816
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Check the current density.</span>
+</span></span><span class="line"><span class="cl"><span class="n">W_current</span> <span class="o">=</span> <span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&#34;DG&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">Je</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W_current</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Je_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="o">-</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">Seebeck_coeff</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">W_current</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">Je</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">Je_expr</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Check the heat flux.</span>
+</span></span><span class="line"><span class="cl"><span class="n">W_heat_flux</span> <span class="o">=</span> <span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&#34;DG&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">JQ</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W_heat_flux</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">JQ_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="o">-</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="n">Seebeck_coeff</span> <span class="o">*</span> <span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">Je</span><span class="p">,</span> <span class="n">W_heat_flux</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">JQ</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">JQ_expr</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Check the temperature gradient, which is the &#34;hot to cold&#34; direction.</span>
+</span></span><span class="line"><span class="cl"><span class="n">W_gradT</span> <span class="o">=</span> <span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&#34;DG&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradT</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W_gradT</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradT_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">W_gradT</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradT</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">gradT_expr</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Check grad(volt), which is proportional to grad mu</span>
+</span></span><span class="line"><span class="cl"><span class="n">W_gradV</span> <span class="o">=</span> <span class="n">VectorFunctionSpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="s2">&#34;DG&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradV</span> <span class="o">=</span> <span class="n">Function</span><span class="p">(</span><span class="n">W_gradV</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradV_expr</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="n">W_gradV</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">interpolation_points</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">gradV</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">gradV_expr</span><span class="p">)</span>
+</span></span></code></pre></div><p>We save these expressions in xdmf format, for post processing and visualization with Paraview.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">io</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/Efield_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">E_field</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">io</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/Je_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">Je</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">dolfinx</span> <span class="kn">import</span> <span class="n">io</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/JQ_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">JQ</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/gradT_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">gradT</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1">#print(type(TempVolt.sub(1)))</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/voltage_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/temperature_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">TempVolt</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">XDMFFile</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">comm</span><span class="p">,</span> <span class="s2">&#34;solution/gradV_S30e-6_I0_newWF_test_noVoltbc.xdmf&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">xdmf</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xdmf</span><span class="o">.</span><span class="n">write_function</span><span class="p">(</span><span class="n">gradV</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"></code></pre></div>
+    </div>
+
+    
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/&amp;text=Thermoelectricity%20With%20FEniCSx" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/&amp;t=Thermoelectricity%20With%20FEniCSx" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Thermoelectricity%20With%20FEniCSx&amp;body=https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/&amp;title=Thermoelectricity%20With%20FEniCSx" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Thermoelectricity%20With%20FEniCSx%20https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://mantledparamountic.github.io/post/thermoelectricity-with-fenicsx/&amp;title=Thermoelectricity%20With%20FEniCSx" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  
+  <p class="powered-by copyright-license-text">
+    This work is licensed under GPL-3.0-or-later. Copyleft, © 2023.
+  </p>
+  
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-themes" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.d26509351aa0ff874abbee824e982e9b.js"></script>
+
+    
+    
+    
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.c251366b4128fd5e6b046d4c97a62a51.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.43c8f7a4851160885a7d8069dfa86538.js"></script>
+
+    
+    
+    
+    
+    
+    
+      
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <script src="/js/wowchemy-publication.68f8d7090562ca65fc6d3cb3f8f2d2cb.js" type="module"></script>
+
+
+
+
+
+
+</body>
+</html>
